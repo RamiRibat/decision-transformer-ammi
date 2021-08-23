@@ -2,7 +2,7 @@
 
 My implementation of Decision Transformer as a part of AMMI Bootcamp II.
 
-Paper: Decision Transformer: Reinforcement Learning via Sequence Modeling [Arxiv](https://arxiv.org/abs/2106.01345)
+Paper: Decision Transformer: Reinforcement Learning via Sequence Modeling, [Arxiv](https://arxiv.org/abs/2106.01345)
 
 Original codel: [Github](https://github.com/kzl/decision-transformer)
 

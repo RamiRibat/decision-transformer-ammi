@@ -7,3 +7,5 @@ Paper: Decision Transformer: Reinforcement Learning via Sequence Modeling, [Arxi
 Original codel: [Github](https://github.com/kzl/decision-transformer)
 
 Slides: [Link](https://docs.google.com/presentation/d/1UC4lRa7Rp1DrWDjl-jJEHkFddBdCLfoQgxj2x7oqVkg/edit?usp=sharing)
+
+W&B: [Link](https://wandb.ai/rami-ahmed/decision-transformer-gym?workspace=user-rami-ahmed)

@@ -4,8 +4,9 @@ configurations = {
         'project_name': 'decision-transformer-gym',
         'env_name': 'hopper',
         'max_env_len': 1000,
-        'env_targets': [3600, 1800],
-        'mode': 'normal',
+        'scale': 1000,
+        'env_targets': [5000, 2500],
+        'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
         'device': 'cuda:0',
         'WandB': True,
@@ -25,14 +26,16 @@ configurations = {
         'positions': 1024,
         'act_fn': 'relu',
         'dropout': 0.1,
+        'optimizer': "AdamW",
         'lr': 1e-4,
+        'scheduler': "LambdaLR",
         'weight_decay': 1e-4,
     },
 
     'learning': {
-        'epochs': 10,
-        'epoch_steps': 10000, # Iterations/Episode
-        'init_epochs': 1, # Episodes
+        'nIter': 10,
+        'niIter': 1, # Episodes
+        'iter_steps': 10000, # Iterations/Episode
     },
 
     'evaluation': {

@@ -54,6 +54,7 @@ class ORL:
 
 
     def train_agent(self, NT, batch_size):
+        print('train Agent!')
         # NT = self.config['learning']['iter_steps']
         self.agent.train()
 
@@ -67,6 +68,7 @@ class ORL:
             
 
     def evaluate_agent(self, EE):
+        print('eval Agent!')
         env_targets = self.config['experiment']['env_targets']
         device = self.config['experiment']['device']
 

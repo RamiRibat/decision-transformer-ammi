@@ -23,7 +23,7 @@ class ORL:
 
 
     def _set_env(self):
-        name = self.config['experiment']['env_name']
+        name = 'Hopper-v3'# self.config['experiment']['env_name']
         # seed = self.config['experiment']['seed']
         evaluate = self.config['evaluation']['evaluate']
 
@@ -53,13 +53,37 @@ class ORL:
         self.act_lower_lim = self.train_env.action_space.low
 
 
-    def init_learning(self):
-        pass
+    def train_agent(self, NT, batch_size):
+        # NT = self.config['learning']['iter_steps']
+        self.agent.train()
 
+        Losses = []
+        for nt in range(NT):
+            loss = self.agent.train_model(self.data, batch_size)
+            Losses.append(loss)
+            if self.agent.scheduler: self.agent.scheduler.step()
 
-    def interact(self):
-        pass
+        return Losses
+            
 
+    def evaluate_agent(self, EE):
+        env_targets = self.config['experiment']['env_targets']
+        device = self.config['experiment']['device']
 
-    def evaluate(self):
-        pass
+        self.agent.eval()
+
+        eval_logs = dict()
+        for target_rew in env_targets:
+            returns, lengths = [], []
+            for e in range(EE):
+                with th.no_grad():
+                    ret, length = self.agent.evaluate_model(device, target_return=target_rew)
+                returns.append(ret)
+                lengths.append(length)
+            eval_logs.update({
+                f'target_{target_rew}_return_mean': np.mean(returns),
+                f'target_{target_rew}_return_std': np.std(returns),
+                f'target_{target_rew}_length_mean': np.mean(lengths),
+                f'target_{target_rew}_length_std': np.std(lengths)})
+
+        return eval_logs

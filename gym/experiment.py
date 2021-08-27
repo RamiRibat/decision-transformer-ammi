@@ -1,42 +1,69 @@
+# Imports
+
+## General
+import sys
 import argparse
+import importlib
+import time
+import datetime
+import random
 
-
+## ML & RL
 import numpy as np
 import torch as th
+import wandb
+
+## Decision Transformer
+from rl.mfrl import MFRL
+
+def main(configs):
+    print('Start Decision Transformer experiment...')
+    print('\n')
+    env_name = configs['experiment']['env_name']
+    data_type = configs['data']['data_type']
 
 
-from decision_transformer.agents.dt import DecisionTransformer
-from decision_transformer.agents.traj_gptx.gpt2 import GPT2
-from decision_transformer.training.trans_trainer import TransforemerTrainer
+    group_name = f"gym-experiment-{env_name}-{data_type}"
+    # exp_prefix = f"{group_name}-{random.randint(int(1e5), int(1e6) - 1)}"
+    now = datetime.datetime.now()
+    exp_prefix = f"{group_name}-{now.year}/{now.month}/{now.day}-->{now.hour}:{now.minute}:{now.second}"
 
+    print('=' * 50)
+    print(f'Starting new experiment: {env_name} {data_type}')
+    print('=' * 50)
+    
+    # if configs['experiment']['WandB']:
+    #     wandb.init(
+    #         name=exp_prefix,
+    #         group=group_name,
+    #         project='decision-transformer-gym',
+    #         config=configs
+    #     )
 
+    experiment = MFRL(configs)
 
+    experiment.learn()
 
-
-def experiment(name, settings):
-    # env, env_eval = 
-
-    state_dim, action_dim = env.observation_space[0], env.action_space[0]
-
-    dt_agent = DecisionTransformer(s_dim=state_dim, a_dim=action_dim,
-                                   settings=settings['agent'])
-
-    trainer = TransforemerTrainer(agent=dt_agent,
-                                  loss=lambda a_hat, a: th.mean((a_hat - a)**2),
-                                  settings=settings['training']
-                                  )
-
-    for ep in range(settings['nEpisodes']):
-        trainer.train(nEne=settings['nEnvSteps'],
-                      Ep=ep+1)
+    print('\n')
+    print('...End Decision Transformer experiment')
     pass
 
 
 
+# python -m fusion.run train -alg mbpo -cfg gym_w2d_at_s1
 
 if __name__ == "__main__":
+    import argparse
+
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('-cfg', type=str)
+    parser.add_argument('-cfg_path', type=str)
 
     args = parser.parse_args()
 
-    experiment(name='gym_cheetah_exp', settings=vars(args))
+    sys.path.append("/home/rami/AMMI/Git/decision-transformer-ammi/gym/config")
+    config = importlib.import_module(args.cfg)
+    print('configurations: ', config.configurations)
+
+    main(config.configurations)

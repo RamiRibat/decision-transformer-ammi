@@ -93,12 +93,7 @@ class DecisionTransformer(nn.Module):
             S = S[:, -K:]
             A = A[:, -K:]
 
-            att_mask = th.cat(
-                [th.zeros(K-S.shape[1]), th.ones(S.shape[1])]
-            ).reshape(1, -1).to(dtype=th.long, device=S.device)
-            # returns_to_go = torch.cat(
-            #     [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1), device=returns_to_go.device), returns_to_go],
-            #     dim=1).to(dtype=torch.float32)
+            att_mask = th.cat([th.zeros(K-S.shape[1]), th.ones(S.shape[1])]).reshape(1, -1).to(dtype=th.long, device=S.device)
             R2G = th.cat([th.zeros((R2G.shape[0], K-R2G.shape[1], 1), device=R2G.device), R2G], dim=1).to(dtype=th.float32)
             S = th.cat([th.zeros((S.shape[0], K-S.shape[1], self.state_dim), device=S.device), S], dim=1).to(dtype=th.float32)
             A = th.cat([th.zeros((A.shape[0], K-A.shape[1], self.act_dim), device=A.device), A], dim=1).to(dtype=th.float32)

@@ -32,13 +32,14 @@ def main(configs):
     print(f'Starting new experiment: {env_name} {data_type}')
     print('=' * 50)
     
-    # if configs['experiment']['WandB']:
-    #     wandb.init(
-    #         name=exp_prefix,
-    #         group=group_name,
-    #         project='decision-transformer-gym',
-    #         config=configs
-    #     )
+    if configs['experiment']['WandB']:
+        wandb.init(
+            name=exp_prefix,
+            group=group_name,
+            # project='decision-transformer-gym',
+            project='rand',
+            config=configs
+        )
 
     experiment = MFRL(configs)
 

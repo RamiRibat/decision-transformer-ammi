@@ -23,7 +23,16 @@ class ORL:
 
 
     def _set_env(self):
-        name = 'Hopper-v3'# self.config['experiment']['env_name']
+        env_name = self.config['experiment']['env_name']
+        if env_name == 'hopper':
+            name = 'Hopper-v3'
+        elif env_name == 'halfcheetah':
+            name = 'HalfCheetah-v3'
+        elif env_name == 'walker2d':
+            name = 'Walker2d-v3'
+
+        # name = 'Hopper-v3'# self.config['experiment']['env_name']
+
         # seed = self.config['experiment']['seed']
         evaluate = self.config['evaluation']['evaluate']
 

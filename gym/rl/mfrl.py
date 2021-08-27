@@ -75,7 +75,5 @@ class MFRL(ORL):
                 for k, v in logs.items():
                     print(f'{k}: {v}')
             # WandB
-            # if self.configs['experiment']['WandB']:
-            #     wandb.log(logs)
-
-        pass
+            if self.config['experiment']['WandB']:
+                wandb.log(logs)

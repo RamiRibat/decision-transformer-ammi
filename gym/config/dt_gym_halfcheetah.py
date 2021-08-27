@@ -2,7 +2,7 @@ configurations = {
 
     'experiment': {
         'project_name': 'decision-transformer-gym',
-        'env_name': 'halfcheetahr',
+        'env_name': 'halfcheetah',
         'max_env_len': 1000,
         'scale': 1000,
         'env_targets': [12000, 6000],

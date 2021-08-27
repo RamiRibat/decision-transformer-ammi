@@ -85,10 +85,7 @@ class DecisionTransformer(nn.Module):
         
         K = self.dt_config['K']
         if K:
-            T = T[:, -K:]
-            R2G = R2G[:, -K:]
-            S = S[:, -K:]
-            A = A[:, -K:]
+            T, R2G, S, A = T[:, -K:], R2G[:, -K:], S[:, -K:], A[:, -K:]
 
             att_mask = th.cat([th.zeros(K-S.shape[1]), th.ones(S.shape[1])]).reshape(1, -1).to(dtype=th.long, device=S.device)
             R2G = th.cat([th.zeros((R2G.shape[0], K-R2G.shape[1], 1), device=R2G.device), R2G], dim=1).to(dtype=th.float32)
@@ -134,8 +131,7 @@ class DecisionTransformer(nn.Module):
         state_std = th.as_tensor(state_std).to(device=device)
 
         state = env.reset()
-        if mode == 'noise':
-            state = state + np.random.normal(0, 0.1, size=state.shape)
+        if mode == 'noise': state = state + np.random.normal(0, 0.1, size=state.shape)
 
         states = th.as_tensor(state).reshape(1, self.state_dim).to(device=device, dtype=th.float32)
         actions = th.zeros((0, self.act_dim), device=device, dtype=th.float32)
@@ -158,8 +154,8 @@ class DecisionTransformer(nn.Module):
                 timesteps.to(dtype=th.long),
                 target_return.to(dtype=th.float32),
                 (states.to(dtype=th.float32) - state_mean) / state_std,
-                actions.to(dtype=th.float32),
-            )
+                actions.to(dtype=th.float32))
+            
             actions[-1] = action
             action = action.detach().cpu().numpy()
 
@@ -173,11 +169,8 @@ class DecisionTransformer(nn.Module):
                 pred_return = target_return[0,-1] - (reward/scale)
             else:
                 pred_return = target_return[0,-1]
-            target_return = th.cat(
-                [target_return, pred_return.reshape(1, 1)], dim=1)
-            timesteps = th.cat(
-                [timesteps,
-                th.ones((1, 1), device=device, dtype=th.long) * (t+1)], dim=1)
+            target_return = th.cat([target_return, pred_return.reshape(1, 1)], dim=1)
+            timesteps = th.cat([timesteps, th.ones((1, 1), device=device, dtype=th.long) * (t+1)], dim=1)
 
             episode_return += reward
             episode_length += 1

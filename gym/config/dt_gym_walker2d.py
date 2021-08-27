@@ -2,7 +2,7 @@ configurations = {
 
     'experiment': {
         'project_name': 'decision-transformer-gym',
-        'env_name': 'hopper',
+        'env_name': 'walker2d',
         'max_env_len': 1000,
         'scale': 1000,
         'env_targets': [5000, 2500],

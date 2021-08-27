@@ -37,8 +37,7 @@ class DecisionTransformer(nn.Module):
         # Causal Transformer
         self.transformer = GPT2Model(gpt_config)
         
-        print('embedings')
-        self.emb_t = Embedding(1000, emb_dim)
+        self.emb_t = nn.Embedding(1000, emb_dim)
         self.emb_R2G = Linear(1, emb_dim)
         self.emb_s = Linear(state_dim, emb_dim)
         self.emb_a = Linear(act_dim, emb_dim)
@@ -60,6 +59,8 @@ class DecisionTransformer(nn.Module):
         batch_size, seq_len = S.shape[0], S.shape[1]
         if att_mask is None: att_mask = th.ones((batch_size, seq_len), dtype=th.long)
 
+        # print('T type: ', T.type())
+        # print('S type: ', S.type())
         t_embs = self.emb_t(T)
         R2G_embs = self.emb_R2G(R2G) + t_embs
         s_embs = self.emb_s(S) + t_embs
@@ -104,6 +105,9 @@ class DecisionTransformer(nn.Module):
             A = th.cat(
                 [th.zeros((A.shape[1], K-A.shape[1], self.act_dim), dim=1), A]
             ).to(dtype=th.float32)
+            T = th.cat(
+                [th.zeros((T.shape[1], K-T.shape[1], self.act_dim), dim=1), T]
+            ).to(dtype=th.long)
         else:
             att_mask = None
 
@@ -116,15 +120,15 @@ class DecisionTransformer(nn.Module):
         a_preds = self(T, R2G[:, :-1], S, A, att_mask=mask)
 
         act_dim = a_preds.shape[2]
-        a_target = a_target.reshape(-1, act_dim)[mask.reshape(-1, 1) > 0]
-        a_preds = a_preds.reshape(-1, act_dim)[mask.reshape(-1, 1) > 0]
+        a_target = a_target.reshape(-1, act_dim)[mask.reshape(-1) > 0]
+        a_preds = a_preds.reshape(-1, act_dim)[mask.reshape(-1) > 0]
         loss = self.loss(a_target, a_preds)
 
         self.optimizer.zero_grad()
         loss.backward()
         nn.utils.clip_grad_norm_(self.parameters(), .25)
         self.optimizer.step()
-        return loss.detatch().cpu().item()
+        return loss.detach().cpu().item()
 
 
     # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)

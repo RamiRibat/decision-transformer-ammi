@@ -22,7 +22,6 @@ class DecisionTransformer(nn.Module):
         self.act_dim = act_dim
         emb_dim = dt_config['emb_dim']
         self.emb_dim = emb_dim
-        # self.device = self.config['experiment']['device']
 
         gpt_args = dict(n_layer = dt_config['nLayers'],
                         n_head = dt_config['nHeads'],
@@ -48,10 +47,8 @@ class DecisionTransformer(nn.Module):
 
         optimizer = 'th.optim.' + dt_config['optimizer']
         schedular = 'th.optim.lr_scheduler.' + dt_config['scheduler']
-        self.optimizer = eval(optimizer)(
-            self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
-        self.scheduler = eval(schedular)(
-            self.optimizer, lambda t: min((t+1)/(Ni*Nt), 1))
+        self.optimizer = eval(optimizer)(self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
+        self.scheduler = eval(schedular)(self.optimizer, lambda t: min((t+1)/(Ni*Nt), 1))
         self.loss = MSELoss()
 
 
@@ -133,10 +130,6 @@ class DecisionTransformer(nn.Module):
         state_std=1.,
         target_return=None,):
 
-
-        # self.agent.eval()
-        # self.agent.to(device=device)
-
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)
 
@@ -155,7 +148,7 @@ class DecisionTransformer(nn.Module):
         sim_states = []
 
         episode_return, episode_length = 0, 0
-        for t in range(E):
+        for e in range(E):
 
             # add padding
             actions = th.cat([actions, th.zeros((1, self.act_dim), device=device)], dim=0)
@@ -189,8 +182,7 @@ class DecisionTransformer(nn.Module):
             episode_return += reward
             episode_length += 1
 
-            if done:
-                break
+            if done: break
 
         return episode_return, episode_length
     # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)

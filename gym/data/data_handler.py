@@ -105,9 +105,18 @@ class Data:
         S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(device)
         A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(device)
         R = th.as_tensor(np.concatenate(R, axis=0), dtype=th.float32).to(device)
-        D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.float32).to(device)
+        D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.long).to(device)
         R2G = th.as_tensor(np.concatenate(R2G, axis=0), dtype=th.float32).to(device)
-        T = th.as_tensor(np.concatenate(T, axis=0), dtype=th.float32).to(device)
+        T = th.as_tensor(np.concatenate(T, axis=0), dtype=th.long).to(device)
         mask = th.as_tensor(np.concatenate(mask, axis=0), dtype=th.float32).to(device)
+
+
+        # S = th.from_numpy(np.concatenate(S, axis=0)).to(dtype=th.float32, device=device)
+        # A = th.from_numpy(np.concatenate(A, axis=0)).to(dtype=th.float32, device=device)
+        # R = th.from_numpy(np.concatenate(R, axis=0)).to(dtype=th.float32, device=device)
+        # D = th.from_numpy(np.concatenate(D, axis=0)).to(dtype=th.float32, device=device)
+        # R2G = th.from_numpy(np.concatenate(R2G, axis=0)).to(dtype=th.float32, device=device)
+        # T = th.from_numpy(np.concatenate(T, axis=0)).to(dtype=th.float32, device=device)
+        # mask = th.from_numpy(np.concatenate(mask, axis=0)).to(dtype=th.float32, device=device)
 
         return S, A, R, D, R2G, T, mask

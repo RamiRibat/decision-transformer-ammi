@@ -96,18 +96,13 @@ class DecisionTransformer(nn.Module):
             att_mask = th.cat(
                 [th.zeros(K-S.shape[1]), th.ones(S.shape[1])]
             ).reshape(1, -1).to(dtype=th.long, device=S.device)
-            R2G = th.cat(
-                [th.zeros((R2G.shape[1], K-R2G.shape[1], 1), dim=1), R2G]
-            ).to(dtype=th.float32)
-            S = th.cat(
-                [th.zeros((S.shape[1], K-S.shape[1], self.state_dim), dim=1), S]
-            ).to(dtype=th.float32)
-            A = th.cat(
-                [th.zeros((A.shape[1], K-A.shape[1], self.act_dim), dim=1), A]
-            ).to(dtype=th.float32)
-            T = th.cat(
-                [th.zeros((T.shape[1], K-T.shape[1], self.act_dim), dim=1), T]
-            ).to(dtype=th.long)
+            # returns_to_go = torch.cat(
+            #     [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1), device=returns_to_go.device), returns_to_go],
+            #     dim=1).to(dtype=torch.float32)
+            R2G = th.cat([th.zeros((R2G.shape[0], K-R2G.shape[1], 1), device=R2G.device), R2G], dim=1).to(dtype=th.float32)
+            S = th.cat([th.zeros((S.shape[0], K-S.shape[1], self.state_dim), device=S.device), S], dim=1).to(dtype=th.float32)
+            A = th.cat([th.zeros((A.shape[0], K-A.shape[1], self.act_dim), device=A.device), A], dim=1).to(dtype=th.float32)
+            T = th.cat([th.zeros((T.shape[0], K-T.shape[1]), device=T.device), T], dim=1).to(dtype=th.long)
         else:
             att_mask = None
 
@@ -134,15 +129,15 @@ class DecisionTransformer(nn.Module):
     # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
     def evaluate_model(
         self,
+        env,
         device,
+        mode,
+        scale,
+        E,
         state_mean=0.,
         state_std=1.,
         target_return=None,):
 
-        # device = self.device
-        mode = self.config['experiment']['mode']
-        scale = self.config['experiment']['scale']
-        E = self.config['experiment']['max_env_len']
 
         # self.agent.eval()
         # self.agent.to(device=device)
@@ -150,7 +145,7 @@ class DecisionTransformer(nn.Module):
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)
 
-        state = self.eval_env.reset()
+        state = env.reset()
         if mode == 'noise':
             state = state + np.random.normal(0, 0.1, size=state.shape)
 
@@ -172,16 +167,15 @@ class DecisionTransformer(nn.Module):
             rewards = th.cat([rewards, th.zeros(1, device=device)])
 
             action = self.predict_action(
+                timesteps.to(dtype=th.long),
+                target_return.to(dtype=th.float32),
                 (states.to(dtype=th.float32) - state_mean) / state_std,
                 actions.to(dtype=th.float32),
-                rewards.to(dtype=th.float32),
-                target_return.to(dtype=th.float32),
-                timesteps.to(dtype=th.long),
             )
             actions[-1] = action
             action = action.detach().cpu().numpy()
 
-            state, reward, done, _ = self.eval_env.step(action)
+            state, reward, done, _ = env.step(action)
 
             cur_state = th.as_tensor(state).to(device=device).reshape(1, self.state_dim)
             states = th.cat([states, cur_state], dim=0)

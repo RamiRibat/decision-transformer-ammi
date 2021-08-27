@@ -36,8 +36,8 @@ def main(configs):
         wandb.init(
             name=exp_prefix,
             group=group_name,
-            # project='decision-transformer-gym',
-            project='rand',
+            project='decision-transformer-gym',
+            # project='rand',
             config=configs
         )
 

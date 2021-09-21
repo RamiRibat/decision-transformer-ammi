@@ -9,7 +9,7 @@ configurations = {
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
         'device': 'cuda:0',
-        'WandB': False,
+        'WandB': True,
     },
 
     'data': {

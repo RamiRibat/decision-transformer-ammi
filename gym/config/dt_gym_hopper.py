@@ -8,8 +8,8 @@ configurations = {
         'env_targets': [3600, 1800],
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
-        'device': 'cpu',
-        # 'device': 'cuda:0',
+        # 'device': 'cpu',
+        'device': 'cuda:0',
         'WandB': True,
     },
 

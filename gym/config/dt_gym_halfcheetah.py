@@ -8,8 +8,9 @@ configurations = {
         'env_targets': [12000, 6000],
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
-        'device': 'cuda:0',
-        'WandB': True,
+        'device': 'cpu',
+        # 'device': 'cuda:0',
+        'WandB': False,
     },
 
     'data': {
@@ -18,7 +19,7 @@ configurations = {
         # 'data_type': 'medium-rep', # []
         'batch_size': 64,
     },
-    
+
     'agent': {
         'type': 'dt',
         'K': 20,
@@ -42,7 +43,7 @@ configurations = {
 
     'evaluation': {
         'evaluate': True,
-        'eval_episodes': 100,
+        'eval_episodes': 10,
         'render': None,
     }
 

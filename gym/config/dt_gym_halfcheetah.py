@@ -10,7 +10,7 @@ configurations = {
         'pct_traj': 1.,
         'device': 'cpu',
         # 'device': 'cuda:0',
-        'WandB': False,
+        'WandB': True,
     },
 
     'data': {

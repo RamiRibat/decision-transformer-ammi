@@ -8,8 +8,8 @@ configurations = {
         'env_targets': [12000, 6000],
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
-        'device': 'cpu',
-        # 'device': 'cuda:0',
+        # 'device': 'cpu',
+        'device': 'cuda:0',
         'WandB': True,
     },
 
@@ -43,7 +43,7 @@ configurations = {
 
     'evaluation': {
         'evaluate': True,
-        'eval_episodes': 10,
+        'eval_episodes': 100,
         'render': None,
     }
 

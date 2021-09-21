@@ -9,11 +9,13 @@ configurations = {
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
         'device': 'cuda:0',
-        'WandB': True,
+        'WandB': False,
     },
 
     'data': {
-        'data_type': 'medium',
+        # 'data_type': 'medium-exp', # []
+        'data_type': 'medium', # [5008.68]
+        # 'data_type': 'medium-rep', # []
         'batch_size': 64,
     },
     

@@ -63,6 +63,7 @@ class ORL:
 
         Losses = []
         for nt in range(NT):
+            print(f' [ Agent Training ] Step: {nt} ', end='\r')
             loss = self.agent.train_model(self.data, batch_size)
             Losses.append(loss)
             if self.agent.scheduler: self.agent.scheduler.step()
@@ -70,8 +71,8 @@ class ORL:
         return Losses
             
 
+
     def evaluate_agent(self, EE):
-        print('eval Agent!')
         env_targets = self.config['experiment']['env_targets']
         device = self.config['experiment']['device']
         mode = self.config['experiment']['mode']
@@ -83,11 +84,15 @@ class ORL:
         eval_logs = dict()
         for target_rew in env_targets:
             returns, lengths = [], []
-            for e in range(EE):
+
+            for ee in range(EE):
+                print(f' [ Agent Evaluation ] Episode: {ee} ', end='\r')
                 with th.no_grad():
-                    ret, length = self.agent.evaluate_model(self.eval_env, device, mode, scale, E, target_return=target_rew)
+                    ret, length = self.agent.evaluate_model(self.eval_env,
+                    device, mode, scale, E, target_return=target_rew)
                 returns.append(ret)
                 lengths.append(length)
+
             eval_logs.update({
                 f'target_{target_rew}_return_mean': np.mean(returns),
                 f'target_{target_rew}_return_std': np.std(returns),

@@ -20,11 +20,12 @@ def discount_cumsum(x, gamma):
 
 class Data:
     def __init__(self, state_dim, act_dim, config):
+        print('\nIninitialize Data!')
         self.state_dim, self.act_dim = state_dim, act_dim
         self.config = config
         self.device = config['experiment']['device']
 
-        data_path = f"offdata/{config['experiment']['env_name']}-{config['data']['data_type']}-v2.pkl"
+        data_path = f"data/offdata/{config['experiment']['env_name']}-{config['data']['data_type']}-v2.pkl"
         with open(data_path, 'rb') as f: self.Trajs = pickle.load(f)
 
         mode = config['experiment']['mode']
@@ -49,7 +50,8 @@ class Data:
         nTrajs = 1
         T = Traj_lens[sorted_inxs[-1]]
         inx = len(self.Trajs) - 2
-        while inx >= 0 and T + Traj_lens[sorted_inxs[inx]] < nTrajs:
+        while inx >= 0 and T + Traj_lens[sorted_inxs[inx]] < numT:
+            # print('nTrajs: ', nTrajs)
             T += Traj_lens[sorted_inxs[inx]]
             nTrajs += 1
             inx -= 1
@@ -61,17 +63,17 @@ class Data:
 
         self.nTrajs = nTrajs
         self.sorted_inxs = sorted_inxs
-        pass
 
 
     def sample_batch(self):
         device = self.device
         batch_size = self.config['data']['batch_size']
+        # print('batch_size: ', batch_size)
         scale = self.config['experiment']['scale']
         K = self.config['agent']['K']
         E = self.config['experiment']['max_env_len']
 
-        idxs = np.random.choice(self.nTrajs, size=batch_size, replace=True, p=self.p_sample)
+        idxs = np.random.choice(np.arange(self.nTrajs), size=batch_size, replace=True, p=self.p_sample)
 
         S, A, R, D, R2G, T, mask = [], [], [], [], [], [], []
 

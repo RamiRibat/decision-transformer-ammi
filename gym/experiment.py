@@ -69,4 +69,4 @@ if __name__ == "__main__":
     config = importlib.import_module(args.cfg)
     print('configurations: ', config.configurations)
 
-    # main(config.configurations)
+    main(config.configurations)

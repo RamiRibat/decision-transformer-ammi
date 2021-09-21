@@ -87,7 +87,7 @@ class MFRL(ORL):
         NT = self.config['learning']['iter_steps'] #
         Ni = self.config['learning']['niIter']
         EE = self.config['evaluation']['eval_episodes']
-        batch_size = self.config['data']['batch_size']
+        # batch_size = self.config['data']['batch_size']
 
         env_targets = self.config['experiment']['env_targets']
 
@@ -98,7 +98,7 @@ class MFRL(ORL):
             print(f' [ Learning ] Iter: {n} ')
             # learn
             train_start = time.time()
-            trainLosses = self.train_agent(NT, batch_size)
+            trainLosses = self.train_agent(NT)
             logs['time/training'] = time.time() - train_start
 
             # evaluate
@@ -109,7 +109,7 @@ class MFRL(ORL):
 
             for k, v in eval_logs.items():
                 logs[f'evaluation/{k}'] = v
-                
+
             logs['time/total'] = time.time() - start_time
             logs['time/evaluation'] = time.time() - eval_start
             logs['training/train_loss_mean'] = np.mean(trainLosses)
@@ -123,5 +123,5 @@ class MFRL(ORL):
             # WandB
             if self.config['experiment']['WandB']:
                 wandb.log(logs)
-        
+
         return self.agentagent

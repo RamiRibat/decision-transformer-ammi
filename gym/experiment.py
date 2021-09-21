@@ -16,6 +16,8 @@ import wandb
 ## Decision Transformer
 from rl.mfrl import MFRL
 
+
+
 def main(configs):
     print('Start Decision Transformer experiment...')
     print('\n')
@@ -31,12 +33,12 @@ def main(configs):
     print('=' * 50)
     print(f'Starting new experiment: {env_name} {data_type}')
     print('=' * 50)
-    
+
     if configs['experiment']['WandB']:
         wandb.init(
             name=exp_prefix,
             group=group_name,
-            project='decision-transformer-gym',
+            project='dt-ammi',
             # project='rand',
             config=configs
         )
@@ -63,8 +65,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    sys.path.append("/home/rami/AMMI/Git/decision-transformer-ammi/gym/config")
+    sys.path.append("./config")
     config = importlib.import_module(args.cfg)
     print('configurations: ', config.configurations)
 
-    main(config.configurations)
+    # main(config.configurations)

@@ -22,7 +22,6 @@ class DecisionTransformer(nn.Module):
         self.act_dim = act_dim
         emb_dim = dt_config['emb_dim']
         self.emb_dim = emb_dim
-        # self.device = self.config['experiment']['device']
 
         gpt_args = dict(n_layer = dt_config['nLayers'],
                         n_head = dt_config['nHeads'],
@@ -48,10 +47,8 @@ class DecisionTransformer(nn.Module):
 
         optimizer = 'th.optim.' + dt_config['optimizer']
         schedular = 'th.optim.lr_scheduler.' + dt_config['scheduler']
-        self.optimizer = eval(optimizer)(
-            self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
-        self.scheduler = eval(schedular)(
-            self.optimizer, lambda t: min((t+1)/(Ni*Nt), 1))
+        self.optimizer = eval(optimizer)(self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
+        self.scheduler = eval(schedular)(self.optimizer, lambda t: min((t+1)/(Ni*Nt), 1))
         self.loss = MSELoss()
 
 
@@ -88,17 +85,9 @@ class DecisionTransformer(nn.Module):
         
         K = self.dt_config['K']
         if K:
-            T = T[:, -K:]
-            R2G = R2G[:, -K:]
-            S = S[:, -K:]
-            A = A[:, -K:]
+            T, R2G, S, A = T[:, -K:], R2G[:, -K:], S[:, -K:], A[:, -K:]
 
-            att_mask = th.cat(
-                [th.zeros(K-S.shape[1]), th.ones(S.shape[1])]
-            ).reshape(1, -1).to(dtype=th.long, device=S.device)
-            # returns_to_go = torch.cat(
-            #     [torch.zeros((returns_to_go.shape[0], self.max_length-returns_to_go.shape[1], 1), device=returns_to_go.device), returns_to_go],
-            #     dim=1).to(dtype=torch.float32)
+            att_mask = th.cat([th.zeros(K-S.shape[1]), th.ones(S.shape[1])]).reshape(1, -1).to(dtype=th.long, device=S.device)
             R2G = th.cat([th.zeros((R2G.shape[0], K-R2G.shape[1], 1), device=R2G.device), R2G], dim=1).to(dtype=th.float32)
             S = th.cat([th.zeros((S.shape[0], K-S.shape[1], self.state_dim), device=S.device), S], dim=1).to(dtype=th.float32)
             A = th.cat([th.zeros((A.shape[0], K-A.shape[1], self.act_dim), device=A.device), A], dim=1).to(dtype=th.float32)
@@ -138,16 +127,11 @@ class DecisionTransformer(nn.Module):
         state_std=1.,
         target_return=None,):
 
-
-        # self.agent.eval()
-        # self.agent.to(device=device)
-
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)
 
         state = env.reset()
-        if mode == 'noise':
-            state = state + np.random.normal(0, 0.1, size=state.shape)
+        if mode == 'noise': state = state + np.random.normal(0, 0.1, size=state.shape)
 
         states = th.as_tensor(state).reshape(1, self.state_dim).to(device=device, dtype=th.float32)
         actions = th.zeros((0, self.act_dim), device=device, dtype=th.float32)
@@ -160,7 +144,7 @@ class DecisionTransformer(nn.Module):
         sim_states = []
 
         episode_return, episode_length = 0, 0
-        for t in range(E):
+        for e in range(E):
 
             # add padding
             actions = th.cat([actions, th.zeros((1, self.act_dim), device=device)], dim=0)
@@ -170,8 +154,8 @@ class DecisionTransformer(nn.Module):
                 timesteps.to(dtype=th.long),
                 target_return.to(dtype=th.float32),
                 (states.to(dtype=th.float32) - state_mean) / state_std,
-                actions.to(dtype=th.float32),
-            )
+                actions.to(dtype=th.float32))
+            
             actions[-1] = action
             action = action.detach().cpu().numpy()
 
@@ -185,17 +169,13 @@ class DecisionTransformer(nn.Module):
                 pred_return = target_return[0,-1] - (reward/scale)
             else:
                 pred_return = target_return[0,-1]
-            target_return = th.cat(
-                [target_return, pred_return.reshape(1, 1)], dim=1)
-            timesteps = th.cat(
-                [timesteps,
-                th.ones((1, 1), device=device, dtype=th.long) * (t+1)], dim=1)
+            target_return = th.cat([target_return, pred_return.reshape(1, 1)], dim=1)
+            timesteps = th.cat([timesteps, th.ones((1, 1), device=device, dtype=th.long) * (t+1)], dim=1)
 
             episode_return += reward
             episode_length += 1
 
-            if done:
-                break
+            if done: break
 
         return episode_return, episode_length
     # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)

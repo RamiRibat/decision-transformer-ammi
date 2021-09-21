@@ -14,7 +14,7 @@ class DecisionTransformer(nn.Module):
     Causal Decision Transformer: (R2Gt, st) --> (at)
         traj = (R2G0, s0, a0,, ..., R2Gt, st, at, ..., sT)
     """
-    def __init__(self, state_dim, act_dim, Ni, Nt, dt_config):
+    def __init__(self, state_dim, act_dim, max_ep_len, Ni, Nt, dt_config):
         print('Initialize Decision Transformer!')
         super().__init__()
         self.dt_config = dt_config
@@ -36,7 +36,7 @@ class DecisionTransformer(nn.Module):
         # Causal Transformer
         self.transformer = GPT2Model(gpt_config)
         
-        self.emb_t = nn.Embedding(1000, emb_dim)
+        self.emb_t = nn.Embedding(max_ep_len, emb_dim)
         self.emb_R2G = Linear(1, emb_dim)
         self.emb_s = Linear(state_dim, emb_dim)
         self.emb_a = Linear(act_dim, emb_dim)
@@ -54,6 +54,7 @@ class DecisionTransformer(nn.Module):
 
     def forward(self, T, R2G, S, A, att_mask=None):
         batch_size, seq_len = S.shape[0], S.shape[1]
+        
         if att_mask is None: att_mask = th.ones((batch_size, seq_len), dtype=th.long)
 
         # print('T type: ', T.type())
@@ -72,12 +73,16 @@ class DecisionTransformer(nn.Module):
         transformer_op = self.transformer(
             inputs_embeds=stacked_ips,
             attention_mask=stacked_att_mask)
-        z = transformer_op['last_hidden_state'].reshape(batch_size, seq_len, 3, self.emb_dim).permute(0, 2, 1, 3)
+        z = transformer_op['last_hidden_state'].reshape(batch_size,
+                                                        seq_len, 3,
+                                                        self.emb_dim
+                                                        ).permute(0, 2, 1, 3)
         
         return self.next_act(z[:, 1])
 
 
     def predict_action(self, T, R2G, S, A):
+        print(' [ Predict Action ] ')
         T = T.reshape(1, -1)
         R2G = R2G.reshape(1, -1, 1)
         S = S.reshape(1, -1, self.state_dim)
@@ -98,7 +103,7 @@ class DecisionTransformer(nn.Module):
         return self(T, R2G, S, A, att_mask=att_mask)[0, -1]
 
 
-    def train_model(self, data, batch_size):
+    def train_model(self, data, batch_size): ####
         S, A, _, _, R2G, T, mask = data.sample_batch()
         a_target = th.clone(A)
         a_preds = self(T, R2G[:, :-1], S, A, att_mask=mask)
@@ -115,7 +120,7 @@ class DecisionTransformer(nn.Module):
         return loss.detach().cpu().item()
 
 
-    # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
+    # >>> adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
     def evaluate_model(
         self,
         env,
@@ -170,7 +175,7 @@ class DecisionTransformer(nn.Module):
             else:
                 pred_return = target_return[0,-1]
             target_return = th.cat([target_return, pred_return.reshape(1, 1)], dim=1)
-            timesteps = th.cat([timesteps, th.ones((1, 1), device=device, dtype=th.long) * (t+1)], dim=1)
+            timesteps = th.cat([timesteps, th.ones((1, 1), device=device, dtype=th.long) * (e+1)], dim=1)
 
             episode_return += reward
             episode_length += 1
@@ -178,4 +183,4 @@ class DecisionTransformer(nn.Module):
             if done: break
 
         return episode_return, episode_length
-    # adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)
+    # <<< adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)

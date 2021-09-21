@@ -39,13 +39,12 @@ class MFRL(ORL):
                                          self.act_dim,
                                          self.config['learning']['niIter'],
                                          self.config['learning']['iter_steps'],
-                                         self.config['agent'])
-        self.agent.to(self.device)
+                                         self.config['agent']).to(self.device)
 
 
     def learn(self, print_logs=True):
         N = self.config['learning']['nIter'] # Number of learning iterations
-        NT = self.config['learning']['iter_steps'] # 
+        NT = self.config['learning']['iter_steps'] #
         Ni = self.config['learning']['niIter']
         EE = self.config['evaluation']['eval_episodes']
         batch_size = self.config['data']['batch_size']
@@ -63,7 +62,7 @@ class MFRL(ORL):
             eval_start = time.time()
             eval_logs = self.evaluate_agent(EE)
             for k, v in eval_logs.items():
-                logs[f'evaluation/'] = v
+                logs[f'evaluation/{k}'] = v
             logs['time/total'] = time.time() - start_time
             logs['time/evaluation'] = time.time() - eval_start
             logs['training/train_loss_mean'] = np.mean(trainLosses)

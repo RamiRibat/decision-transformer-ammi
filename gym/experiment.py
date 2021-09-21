@@ -45,8 +45,10 @@ def main(configs):
 
     experiment = MFRL(configs)
 
-    experiment.learn()
+    agent = experiment.learn()
 
+    th.save(agent, f'./saved_agents/dt-agent-{env_name}.pth.tar')
+    
     print('\n')
     print('...End Decision Transformer experiment')
     pass

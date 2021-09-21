@@ -3,5 +3,8 @@
 __pycache__/
 *.pyc
 
-gym/offdata
+gym/data/offdata
 gym/wandb
+
+.DS_Store
+gym/.DS_Store

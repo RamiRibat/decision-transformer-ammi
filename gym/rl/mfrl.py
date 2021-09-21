@@ -123,3 +123,5 @@ class MFRL(ORL):
             # WandB
             if self.config['experiment']['WandB']:
                 wandb.log(logs)
+        
+        return self.agentagent

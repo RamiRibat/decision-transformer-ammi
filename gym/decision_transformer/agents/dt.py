@@ -35,7 +35,7 @@ class DecisionTransformer(nn.Module):
 
         # Causal Transformer
         self.transformer = GPT2Model(gpt_config)
-        
+
         self.emb_t = nn.Embedding(max_ep_len, emb_dim)
         self.emb_R2G = Linear(1, emb_dim)
         self.emb_s = Linear(state_dim, emb_dim)
@@ -54,7 +54,7 @@ class DecisionTransformer(nn.Module):
 
     def forward(self, T, R2G, S, A, att_mask=None):
         batch_size, seq_len = S.shape[0], S.shape[1]
-        
+
         if att_mask is None: att_mask = th.ones((batch_size, seq_len), dtype=th.long)
 
         # print('T type: ', T.type())
@@ -77,17 +77,16 @@ class DecisionTransformer(nn.Module):
                                                         seq_len, 3,
                                                         self.emb_dim
                                                         ).permute(0, 2, 1, 3)
-        
+
         return self.next_act(z[:, 1])
 
 
     def predict_action(self, T, R2G, S, A):
-        print(' [ Predict Action ] ')
         T = T.reshape(1, -1)
         R2G = R2G.reshape(1, -1, 1)
         S = S.reshape(1, -1, self.state_dim)
         A = A.reshape(1, -1, self.act_dim)
-        
+
         K = self.dt_config['K']
         if K:
             T, R2G, S, A = T[:, -K:], R2G[:, -K:], S[:, -K:], A[:, -K:]
@@ -103,7 +102,7 @@ class DecisionTransformer(nn.Module):
         return self(T, R2G, S, A, att_mask=att_mask)[0, -1]
 
 
-    def train_model(self, data, batch_size): ####
+    def train_model(self, data): ####
         S, A, _, _, R2G, T, mask = data.sample_batch()
         a_target = th.clone(A)
         a_preds = self(T, R2G[:, :-1], S, A, att_mask=mask)
@@ -117,6 +116,7 @@ class DecisionTransformer(nn.Module):
         loss.backward()
         nn.utils.clip_grad_norm_(self.parameters(), .25)
         self.optimizer.step()
+
         return loss.detach().cpu().item()
 
 
@@ -160,7 +160,7 @@ class DecisionTransformer(nn.Module):
                 target_return.to(dtype=th.float32),
                 (states.to(dtype=th.float32) - state_mean) / state_std,
                 actions.to(dtype=th.float32))
-            
+
             actions[-1] = action
             action = action.detach().cpu().numpy()
 

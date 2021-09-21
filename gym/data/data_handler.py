@@ -5,6 +5,8 @@ import numpy as np
 from numpy.ma import concatenate
 import torch as th
 
+
+
 # adapted from original code, DT/gym/experiment.py (start)
 def discount_cumsum(x, gamma):
     discount_cumsum = np.zeros_like(x)
@@ -13,6 +15,7 @@ def discount_cumsum(x, gamma):
         discount_cumsum[t] = x[t] + gamma * discount_cumsum[t+1]
     return discount_cumsum
 # adapted from original code, DT/gym/experiment.py (end)
+
 
 
 class Data:
@@ -37,7 +40,7 @@ class Data:
         self.state_mean, self.state_std = np.mean(S, axis=0), np.std(S, axis=0) + 1e-6
         numT = sum(Traj_len)
 
-        # adapted from original code, DT/gym/experiment.py (start)
+        # >>> adapted from original code, DT/gym/experiment.py (start)
         pct_traj = 1. # variant.get('pct_traj', 1.)
 
         # only train on top pct_traj trajectories (for %BC experiment)
@@ -54,7 +57,7 @@ class Data:
 
         # used to reweight sampling so we sample according to timesteps instead of trajectories
         self.p_sample = Traj_lens[sorted_inxs] / sum(Traj_lens[sorted_inxs])
-        # adapted from original code, DT/gym/experiment.py (end)
+        # <<< adapted from original code, DT/gym/experiment.py (end)
 
         self.nTrajs = nTrajs
         self.sorted_inxs = sorted_inxs
@@ -62,7 +65,7 @@ class Data:
 
 
     def sample_batch(self):
-        device = self.config['experiment']['device']
+        device = self.device
         batch_size = self.config['data']['batch_size']
         scale = self.config['experiment']['scale']
         K = self.config['agent']['K']
@@ -71,8 +74,8 @@ class Data:
         idxs = np.random.choice(self.nTrajs, size=batch_size, replace=True, p=self.p_sample)
 
         S, A, R, D, R2G, T, mask = [], [], [], [], [], [], []
-        
-        # adapted from original code, DT/gym/experiment.py (start)
+
+        # >>> adapted from original code, DT/gym/experiment.py (start)
         for i in range(batch_size):
             traj = self.Trajs[int(self.sorted_inxs[idxs[i]])]
             si = random.randint(0, traj['rewards'].shape[0] - 1)
@@ -100,23 +103,23 @@ class Data:
             R2G[-1] = np.concatenate([np.zeros((1, K - tlen, 1)), R2G[-1]], axis=1) / scale
             T[-1] = np.concatenate([np.zeros((1, K - tlen)), T[-1]], axis=1)
             mask.append(np.concatenate([np.zeros((1, K - tlen)), np.ones((1, tlen))], axis=1))
-        # adapted from original code, DT/gym/experiment.py (end)
+        # <<< adapted from original code, DT/gym/experiment.py (end)
 
-        S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(device)
-        A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(device)
-        R = th.as_tensor(np.concatenate(R, axis=0), dtype=th.float32).to(device)
-        D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.long).to(device)
-        R2G = th.as_tensor(np.concatenate(R2G, axis=0), dtype=th.float32).to(device)
-        T = th.as_tensor(np.concatenate(T, axis=0), dtype=th.long).to(device)
-        mask = th.as_tensor(np.concatenate(mask, axis=0), dtype=th.float32).to(device)
+        S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(self.device)
+        A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(self.self.device)
+        R = th.as_tensor(np.concatenate(R, axis=0), dtype=th.float32).to(self.device)
+        D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.long).to(self.device)
+        R2G = th.as_tensor(np.concatenate(R2G, axis=0), dtype=th.float32).to(self.device)
+        T = th.as_tensor(np.concatenate(T, axis=0), dtype=th.long).to(self.device)
+        mask = th.as_tensor(np.concatenate(mask, axis=0)).to(self.device)
 
 
-        # S = th.from_numpy(np.concatenate(S, axis=0)).to(dtype=th.float32, device=device)
-        # A = th.from_numpy(np.concatenate(A, axis=0)).to(dtype=th.float32, device=device)
-        # R = th.from_numpy(np.concatenate(R, axis=0)).to(dtype=th.float32, device=device)
-        # D = th.from_numpy(np.concatenate(D, axis=0)).to(dtype=th.float32, device=device)
-        # R2G = th.from_numpy(np.concatenate(R2G, axis=0)).to(dtype=th.float32, device=device)
-        # T = th.from_numpy(np.concatenate(T, axis=0)).to(dtype=th.float32, device=device)
-        # mask = th.from_numpy(np.concatenate(mask, axis=0)).to(dtype=th.float32, device=device)
+        # S = th.from_numpy(np.concatenate(S, axis=0)).to(dtype=th.float32, device=self.device)
+        # A = th.from_numpy(np.concatenate(A, axis=0)).to(dtype=th.float32, device=self.self.self.device)
+        # R = th.from_numpy(np.concatenate(R, axis=0)).to(dtype=th.float32, device=self.self.device)
+        # D = th.from_numpy(np.concatenate(D, axis=0)).to(dtype=th.float32, device=self.device)
+        # R2G = th.from_numpy(np.concatenate(R2G, axis=0)).to(dtype=th.float32, device=self.device)
+        # T = th.from_numpy(np.concatenate(T, axis=0)).to(dtype=th.float32, device=self.self.device)
+        # mask = th.from_numpy(np.concatenate(mask, axis=0)).to(dtype=th.float32, device=self.device)
 
         return S, A, R, D, R2G, T, mask

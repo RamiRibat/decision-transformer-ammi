@@ -24,7 +24,7 @@ class Data:
         self.config = config
         self.device = config['experiment']['device']
 
-        data_path = f"data/{config['experiment']['env_name']}-{config['data']['data_type']}-v2.pkl"
+        data_path = f"offdata/{config['experiment']['env_name']}-{config['data']['data_type']}-v2.pkl"
         with open(data_path, 'rb') as f: self.Trajs = pickle.load(f)
 
         mode = config['experiment']['mode']
@@ -106,7 +106,7 @@ class Data:
         # <<< adapted from original code, DT/gym/experiment.py (end)
 
         S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(self.device)
-        A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(self.self.device)
+        A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(self.device)
         R = th.as_tensor(np.concatenate(R, axis=0), dtype=th.float32).to(self.device)
         D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.long).to(self.device)
         R2G = th.as_tensor(np.concatenate(R2G, axis=0), dtype=th.float32).to(self.device)

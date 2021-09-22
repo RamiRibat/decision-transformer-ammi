@@ -103,7 +103,7 @@ class DecisionTransformer(nn.Module):
         return self(T, R2G, S, A, att_mask=att_mask)[0, -1]
 
 
-    def train_model(self, data): ####
+    def train_model(self, data):
         S, A, _, _, R2G, T, mask = data.sample_batch()
         a_target = th.clone(A)
         a_preds = self(T, R2G[:, :-1], S, A, att_mask=mask)

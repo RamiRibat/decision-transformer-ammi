@@ -19,6 +19,10 @@ def discount_cumsum(x, gamma):
 
 
 class Data:
+    """
+    Data Handler
+        Handle the offline dataset and transform it to a training set
+    """
     def __init__(self, state_dim, act_dim, config):
         print('Initialize Data!')
         self.state_dim, self.act_dim = state_dim, act_dim
@@ -38,8 +42,10 @@ class Data:
             R.append(path['rewards'].sum())
 
         Traj_lens, R = np.array(Traj_lens), np.array(R)
+
         S = np.concatenate(S, axis=0)
         self.state_mean, self.state_std = np.mean(S, axis=0), np.std(S, axis=0) + 1e-6
+
         numT = sum(Traj_lens)
 
         # >>> adapted from original code, DT/gym/experiment.py (start)

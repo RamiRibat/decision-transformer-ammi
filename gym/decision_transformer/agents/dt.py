@@ -20,8 +20,7 @@ class DecisionTransformer(nn.Module):
         self.dt_config = dt_config
         self.state_dim = state_dim
         self.act_dim = act_dim
-        emb_dim = dt_config['emb_dim']
-        self.emb_dim = emb_dim
+        self.emb_dim = emb_dim = dt_config['emb_dim'] # 128
 
         gpt_args = dict(n_layer = dt_config['nLayers'],
                         n_head = dt_config['nHeads'],
@@ -37,18 +36,20 @@ class DecisionTransformer(nn.Module):
         self.transformer = GPT2Model(gpt_config)
 
         self.emb_t = nn.Embedding(max_ep_len, emb_dim)
-        self.emb_R2G = Linear(1, emb_dim)
+        self.emb_r2g = Linear(1, emb_dim)
         self.emb_s = Linear(state_dim, emb_dim)
         self.emb_a = Linear(act_dim, emb_dim)
 
         self.emb_ln = LayerNorm(emb_dim)
 
-        self.next_act = Sequential(*[Linear(emb_dim, act_dim), Tanh()])
+        self.next_a = Sequential(*[Linear(emb_dim, act_dim), Tanh()])
+
+        # print('dt self: ', self)
 
         optimizer = 'th.optim.' + dt_config['optimizer']
         schedular = 'th.optim.lr_scheduler.' + dt_config['scheduler']
         self.optimizer = eval(optimizer)(self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
-        self.scheduler = eval(schedular)(self.optimizer, lambda t: min((t+1)/(Ni*Nt), 1))
+        self.scheduler = eval(schedular)(self.optimizer, lambda t: min( (t+1)/(Ni*Nt), 1 ))
         self.loss = MSELoss()
 
 
@@ -60,25 +61,25 @@ class DecisionTransformer(nn.Module):
         # print('T type: ', T.type())
         # print('S type: ', S.type())
         t_embs = self.emb_t(T)
-        R2G_embs = self.emb_R2G(R2G) + t_embs
+        r2g_embs = self.emb_r2g(R2G) + t_embs
         s_embs = self.emb_s(S) + t_embs
         a_embs = self.emb_a(A) + t_embs
 
-        stacked_ips = th.stack((R2G_embs, s_embs, a_embs),
+        stacked_ips = th.stack((r2g_embs, s_embs, a_embs),
                                 dim=1).permute(0, 2, 1, 3).reshape(batch_size, 3*seq_len, self.emb_dim)
         stacked_ips = self.emb_ln(stacked_ips)
         stacked_att_mask = th.stack((att_mask, att_mask, att_mask),
                                     dim=1).permute(0, 2, 1).reshape(batch_size, 3*seq_len)
 
-        transformer_op = self.transformer(
+        transformer_ops = self.transformer(
             inputs_embeds=stacked_ips,
             attention_mask=stacked_att_mask)
-        z = transformer_op['last_hidden_state'].reshape(batch_size,
+        z = transformer_ops['last_hidden_state'].reshape(batch_size,
                                                         seq_len, 3,
                                                         self.emb_dim
                                                         ).permute(0, 2, 1, 3)
 
-        return self.next_act(z[:, 1])
+        return self.next_a(z[:, 1])
 
 
     def predict_action(self, T, R2G, S, A):
@@ -130,7 +131,7 @@ class DecisionTransformer(nn.Module):
         E,
         state_mean=0.,
         state_std=1.,
-        target_return=None,):
+        target_return=None):
 
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)

@@ -5,6 +5,7 @@
 This is a re-implementation of **Decision Transformer** as a part of AMMI Bootcamp II. I chose only to re-implemnt the gym code, due to time constrain and limited experience in Atari tasks. I took some codes and scripts from the original repo (mentioned where taken); because I want to focus only on the algorithmic part. (I'm running the experiement now, no reported results yet)
 
 **Paper:** Decision Transformer: Reinforcement Learning via Sequence Modeling, [Arxiv](https://arxiv.org/abs/2106.01345)
+
 **Original repo:** [Github](https://github.com/kzl/decision-transformer)  |  **Slides:** [Link](https://docs.google.com/presentation/d/1UC4lRa7Rp1DrWDjl-jJEHkFddBdCLfoQgxj2x7oqVkg/edit?usp=sharing)  |  **W&B:** [Link](https://wandb.ai/aimsammi/dt-ammi?workspace=user-rami-ahmed)
 
 ## Installation

@@ -55,12 +55,13 @@ class ORL:
         self.act_lower_lim = self.eval_env.action_space.low
 
 
-    def train_agent(self, NT):
+    def train_agent(self, NT, print_logs=True):
         self.agent.train()
 
         Losses = []
         for nt in range(NT):
-            print(f' [ Agent Training ] Step: {nt} ', end='\r')
+            if print_logs:
+                print(f' [ Agent Training ] Step: {nt}   ', end='\r')
             loss = self.agent.train_model(self.data)
             Losses.append(loss)
             if self.agent.scheduler: self.agent.scheduler.step()
@@ -69,7 +70,7 @@ class ORL:
 
 
 
-    def evaluate_agent(self, EE):
+    def evaluate_agent(self, EE, print_logs=True):
         env_targets = self.config['experiment']['env_targets']
         device = self.config['experiment']['device']
         mode = self.config['experiment']['mode']
@@ -83,7 +84,8 @@ class ORL:
             returns, lengths = [], []
 
             for ee in range(EE):
-                print(f' [ Agent Evaluation ] Target: {target_rew}, Episode: {ee} ', end='\r')
+                if print_logs:
+                    print(f' [ Agent Evaluation ] Target: {target_rew}, Episode: {ee}   ', end='\r')
                 with th.no_grad():
                     ret, length = self.agent.evaluate_model(self.eval_env,
                     device, mode, scale, E, target_return=target_rew)

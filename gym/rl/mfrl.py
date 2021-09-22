@@ -87,7 +87,6 @@ class MFRL(ORL):
         NT = self.config['learning']['iter_steps'] #
         Ni = self.config['learning']['niIter']
         EE = self.config['evaluation']['eval_episodes']
-        # batch_size = self.config['data']['batch_size']
 
         env_targets = self.config['experiment']['env_targets']
 
@@ -95,17 +94,19 @@ class MFRL(ORL):
         print('Start Learning!')
         start_time = time.time()
         for n in range(N):
-            print(f' [ Learning ] Iter: {n} ')
+            if print_logs:
+                print('=' * 80)
+                print(f' [ Learning ] Iteration: {n} ')
             # learn
             train_start = time.time()
-            trainLosses = self.train_agent(NT)
+            trainLosses = self.train_agent(NT, print_logs)
             logs['time/training'] = time.time() - train_start
 
             # evaluate
             # eval_logs = dict()
             eval_start = time.time()
             # for target in env_targets:
-            eval_logs = self.evaluate_agent(EE)
+            eval_logs = self.evaluate_agent(EE, print_logs)
 
             for k, v in eval_logs.items():
                 logs[f'evaluation/{k}'] = v
@@ -114,12 +115,14 @@ class MFRL(ORL):
             logs['time/evaluation'] = time.time() - eval_start
             logs['training/train_loss_mean'] = np.mean(trainLosses)
             logs['training/train_loss_std'] = np.std(trainLosses)
+
             # log
             if print_logs:
-                print('=' * 80)
-                print(f'Iteration {n}')
+                # print('=' * 80)
+                # print(f'Iteration {n}')
                 for k, v in logs.items():
                     print(f'{k}: {v}')
+
             # WandB
             if self.config['experiment']['WandB']:
                 wandb.log(logs)

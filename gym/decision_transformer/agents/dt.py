@@ -124,14 +124,15 @@ class DecisionTransformer(nn.Module):
     # >>> adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
     def evaluate_model(
         self,
-        env,
-        device,
-        mode,
-        scale,
-        E,
-        state_mean=0.,
-        state_std=1.,
+        env, device, mode, scale, E,
+        state_mean=0., state_std=1.,
         target_return=None):
+        print('mode: ', mode)
+        print('scale: ', scale)
+        print('E: ', E)
+        print('state_mean: ', state_mean)
+        print('state_std: ', state_std)
+        print('target_return: ', target_return)
 
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)
@@ -175,6 +176,7 @@ class DecisionTransformer(nn.Module):
                 pred_return = target_return[0,-1] - (reward/scale)
             else:
                 pred_return = target_return[0,-1]
+
             target_return = th.cat([target_return, pred_return.reshape(1, 1)], dim=1)
             timesteps = th.cat([timesteps, th.ones((1, 1), device=device, dtype=th.long) * (e+1)], dim=1)
 

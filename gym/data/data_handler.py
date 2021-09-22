@@ -20,7 +20,7 @@ def discount_cumsum(x, gamma):
 
 class Data:
     def __init__(self, state_dim, act_dim, config):
-        print('Ininitialize Data!')
+        print('Initialize Data!')
         self.state_dim, self.act_dim = state_dim, act_dim
         self.config = config
         self.device = config['experiment']['device']

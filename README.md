@@ -60,7 +60,7 @@ python experiment.py -cfg <config file name-.py>
 ```
 for example:
 ```
-python experiment.py -cfg dt_halfcheetah
+python experiment.py -cfg dt_gym_halfcheetah
 ```
 
 ## Results

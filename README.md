@@ -83,7 +83,7 @@ Next, I'll run the following:
 
 Note: The above results are normalized scores for those tasks, to calculate the normalized score from the final return:
 
-<img src="https://render.githubusercontent.com/render/math?math=norm\_score = \frac{score - min\_score}{max\_score - min\_score}">
+<img src="https://render.githubusercontent.com/render/math?math=norm\_score = \frac{score - min\_score}{max\_score - min\_score} * 100">
 
 where the score is the return from the plot, and the min-max scores for the environments are in the following table:
 

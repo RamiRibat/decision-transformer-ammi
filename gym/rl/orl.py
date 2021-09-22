@@ -25,20 +25,6 @@ class ORL:
         elif env_name == 'walker2d':
             name = 'Walker2d-v3'
 
-        # name = 'Hopper-v3'# self.config['experiment']['env_name']
-
-        # seed = self.config['experiment']['seed']
-
-
-        # self.train_env, self.dt_from_xml = create_env(name)
-
-
-        # self.train_env = gym.make(name) #MakeEnv(self.environment)
-        # self.train_env.seed(seed)
-        # self.train_env.action_space.seed(seed)
-        # self.train_env.observation_space.seed(seed)
-
-
         if self.config['evaluation']['evaluate']:
             # self.eval_env, self.dt_from_xml = create_env(name)
             self.eval_env = gym.make(name) #MakeEnv(self.environment)
@@ -88,7 +74,7 @@ class ORL:
                     print(f' [ Agent Evaluation ] Target: {target_rew}, Episode: {ee}   ', end='\r')
                 with th.no_grad():
                     ret, length = self.agent.evaluate_model(self.eval_env,
-                    device, mode, scale, E, target_return=target_rew)
+                    device, mode, scale, E, target_return=target_rew/scale)
                 returns.append(ret)
                 lengths.append(length)
 
@@ -96,6 +82,7 @@ class ORL:
                 f'target_{target_rew}_return_mean': np.mean(returns),
                 f'target_{target_rew}_return_std': np.std(returns),
                 f'target_{target_rew}_length_mean': np.mean(lengths),
-                f'target_{target_rew}_length_std': np.std(lengths)})
+                # f'target_{target_rew}_length_std': np.std(lengths)
+                })
 
         return eval_logs

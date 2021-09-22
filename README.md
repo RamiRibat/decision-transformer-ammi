@@ -1,20 +1,14 @@
-# AMMI Bootcamp II
+# AMMI Bootcamp II,  Summer 2021
 
 ## Decision Transformer AMMI
 
-Re-implementation of Decision Transformer as a part of AMMI Bootcamp II.
+This is a re-implementation of **Decision Transformer** as a part of AMMI Bootcamp II. I chose only to re-implemnt the gym code, due to time constrain and limited experience in Atari tasks. I took some codes and scripts from the original repo (mentioned where taken); because I want to focus only on the algorithmic part. (I'm running the experiement now, no reported results yet)
 
-**Paper:** Decision Transformer: Reinforcement Learning via Sequence Modeling, [Arxiv](https://arxiv.org/abs/2106.01345)
-
-**Original repo:** [Github](https://github.com/kzl/decision-transformer)
-
-**Slides:** [Link](https://docs.google.com/presentation/d/1UC4lRa7Rp1DrWDjl-jJEHkFddBdCLfoQgxj2x7oqVkg/edit?usp=sharing)
-
-**W&B:** [Link](https://wandb.ai/rami-ahmed/decision-transformer-gym?workspace=user-rami-ahmed)
+**Paper:** Decision Transformer: Reinforcement Learning via Sequence Modeling, [Arxiv](https://arxiv.org/abs/2106.01345)  |  **Original repo:** [Github](https://github.com/kzl/decision-transformer)  |  **Slides:** [Link](https://docs.google.com/presentation/d/1UC4lRa7Rp1DrWDjl-jJEHkFddBdCLfoQgxj2x7oqVkg/edit?usp=sharing)  |  **W&B:** [Link](https://wandb.ai/aimsammi/dt-ammi?workspace=user-rami-ahmed)
 
 ## Installation
 
-### Ubuntu
+### Ubuntu 20.04
 Create a new cond aenvironment:
 ```
 conda create -n dt-gym-ammi python=3.8
@@ -32,7 +26,7 @@ sudo apt-get install ffmpeg
 pip install mujoco-py==2.0.2.13
 ```
 
-### MacOS
+### MacOS Big Sur
 Create a new cond aenvironment:
 ```
 conda create -n dt-gym-ammi python=3.8
@@ -70,7 +64,7 @@ python experiment.py -cfg dt_halfcheetah
 ```
 
 ## Results
-I chose a subset of tasks to evaluate and validate my re-implementation, HalfCheetah, Walker, and Hopper for medium offline datasets. Check [W&B]()
+Due to time limit and limited compute resources, I chose a subset of tasks to evaluate and validate my re-implementation: HalfCheetah, Walker, and Hopper for medium offline datasets. Check [W&B](https://wandb.ai/aimsammi/dt-ammi?workspace=user-rami-ahmed)
 
 | Dataset | Environement | DT (mine) | DT (paper) |
 | ------------- | ------------- | ------------- | ------------- |
@@ -87,7 +81,7 @@ Next, I'll run the following:
 | Medium-Expert | Walker2d | ? ± ? | 108.1 ± 0.2 |
 
 
-Note: The above results are normalized scores for those tasks, to calculate the normalized score from the plot of return:
+Note: The above results are normalized scores for those tasks, to calculate the normalized score from the final return:
 
 <img src="https://render.githubusercontent.com/render/math?math=norm\_score = \frac{score - min\_score}{max\_score - min\_score}">
 

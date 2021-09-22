@@ -73,8 +73,11 @@ class ORL:
                 if print_logs:
                     print(f' [ Agent Evaluation ] Target: {target_rew}, Episode: {ee}   ', end='\r')
                 with th.no_grad():
-                    ret, length = self.agent.evaluate_model(self.eval_env,
-                    device, mode, scale, E, target_return=target_rew/scale)
+                    ret, length = self.agent.evaluate_model(
+                                                self.eval_env,
+                                                device, mode, scale, E,
+                                                self.data.state_mean, self.data.state_std,
+                                                target_return=target_rew/scale)
                 returns.append(ret)
                 lengths.append(length)
 

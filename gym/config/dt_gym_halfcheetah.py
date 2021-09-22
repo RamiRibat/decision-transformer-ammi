@@ -8,9 +8,9 @@ configurations = {
         'env_targets': [12000, 6000],
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
-        # 'device': 'cpu',
-        'device': 'cuda:0',
-        'WandB': True,
+        'device': 'cpu',
+        # 'device': 'cuda:0',
+        'WandB': False,
     },
 
     'data': {
@@ -35,15 +35,21 @@ configurations = {
         'weight_decay': 1e-4,
     },
 
+    # 'learning': {
+    #     'nIter': 10,
+    #     'niIter': 1, # Episodes
+    #     'iter_steps': 10000, # Iterations/Episode
+    # },
+
     'learning': {
-        'nIter': 10,
+        'nIter': 5,
         'niIter': 1, # Episodes
-        'iter_steps': 10000, # Iterations/Episode
+        'iter_steps': 20, # Iterations/Episode
     },
 
     'evaluation': {
         'evaluate': True,
-        'eval_episodes': 100,
+        'eval_episodes': 5,
         'render': None,
     }
 

@@ -8,3 +8,5 @@ gym/wandb
 
 .DS_Store
 gym/.DS_Store
+
+gym/saved_agents/

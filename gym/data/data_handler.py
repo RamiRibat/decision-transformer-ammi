@@ -22,24 +22,25 @@ class Data:
     def __init__(self, state_dim, act_dim, config):
         print('Initialize Data!')
         self.state_dim, self.act_dim = state_dim, act_dim
-        self.config = config
         self.device = config['experiment']['device']
+        self.config = config
 
         data_path = f"data/offdata/{config['experiment']['env_name']}-{config['data']['data_type']}-v2.pkl"
         with open(data_path, 'rb') as f: self.Trajs = pickle.load(f)
 
         mode = config['experiment']['mode']
-        Traj_len, S, R = [], [], []
+        Traj_lens, S, R = [], [], []
         for path in self.Trajs:
             if mode == 'delayed':
                 pass
-            Traj_len.append(len(path['observations']))
+            Traj_lens.append(len(path['observations']))
             S.append(path['observations'])
             R.append(path['rewards'].sum())
-        Traj_lens, R = np.array(Traj_len), np.array(R)
+
+        Traj_lens, R = np.array(Traj_lens), np.array(R)
         S = np.concatenate(S, axis=0)
         self.state_mean, self.state_std = np.mean(S, axis=0), np.std(S, axis=0) + 1e-6
-        numT = sum(Traj_len)
+        numT = sum(Traj_lens)
 
         # >>> adapted from original code, DT/gym/experiment.py (start)
         pct_traj = 1. # variant.get('pct_traj', 1.)
@@ -68,10 +69,10 @@ class Data:
     def sample_batch(self):
         device = self.device
         batch_size = self.config['data']['batch_size']
-        # print('batch_size: ', batch_size)
         scale = self.config['experiment']['scale']
         K = self.config['agent']['K']
         E = self.config['experiment']['max_env_len']
+        # print('batch_size: ', batch_size)
 
         idxs = np.random.choice(np.arange(self.nTrajs), size=batch_size, replace=True, p=self.p_sample)
 
@@ -108,6 +109,7 @@ class Data:
         # <<< adapted from original code, DT/gym/experiment.py (end)
 
         S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(self.device)
+        # print('S: ', S)
         A = th.as_tensor(np.concatenate(A, axis=0), dtype=th.float32).to(self.device)
         R = th.as_tensor(np.concatenate(R, axis=0), dtype=th.float32).to(self.device)
         D = th.as_tensor(np.concatenate(D, axis=0), dtype=th.long).to(self.device)

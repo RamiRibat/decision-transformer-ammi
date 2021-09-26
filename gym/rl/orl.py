@@ -11,9 +11,10 @@ class ORL:
     Offline Reinforcement Learning module
         Handle higher training and evalution of the trained agent
     """
-    def __init__(self, config):
+    def __init__(self, config, seed):
         print('Initialize ORL!')
         self.config = config
+        self.seed = seed
 
 
     def _build(self):
@@ -29,14 +30,14 @@ class ORL:
         elif env_name == 'walker2d':
             name = 'Walker2d-v3'
 
-        if self.config['evaluation']['evaluate']:
+        # if self.config['evaluation']['evaluate']:
             # self.eval_env, self.dt_from_xml = create_env(name)
-            self.eval_env = gym.make(name) #MakeEnv(self.environment)
-            # self.eval_env.seed(seed)
-            # self.eval_env.action_space.seed(seed)
-            # self.eval_env.observation_space.seed(seed)
-        else:
-            self.eval_env = None
+        self.eval_env = gym.make(name) #MakeEnv(self.environment)
+        self.eval_env.seed(self.seed)
+        self.eval_env.action_space.seed(self.seed)
+        self.eval_env.observation_space.seed(self.seed)
+        # else:
+        #     self.eval_env = None
 
         self.state_dim = self.eval_env.observation_space.shape[0]
         self.act_dim = self.eval_env.action_space.shape[0]
@@ -59,7 +60,7 @@ class ORL:
         return Losses
 
 
-    def evaluate_agent(self, EE, print_logs=True):
+    def evaluate_agent(self, EE, gif, n, print_logs=True):
         env_targets = self.config['experiment']['env_targets']
         device = self.config['experiment']['device']
         mode = self.config['experiment']['mode']
@@ -75,9 +76,11 @@ class ORL:
             for ee in range(EE):
                 if print_logs:
                     print(f' [ Agent Evaluation ] Target: {target_rew}, Episode: {ee}   ', end='\r')
+                if ee > 0:
+                    gif = False
                 with th.no_grad():
                     ret, length = self.agent.evaluate_model(
-                                                self.eval_env,
+                                                self.eval_env, gif, n,
                                                 device, mode, scale, E,
                                                 self.data.state_mean, self.data.state_std,
                                                 target_return=target_rew/scale)

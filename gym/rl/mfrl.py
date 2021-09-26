@@ -21,11 +21,12 @@ class MFRL(ORL):
         1. Set and build basic components of the MFRL experiment
         2. Handle the agent learning loop
     """
-    def __init__(self, config):
-        super(MFRL, self).__init__(config)
+    def __init__(self, config, seed):
+        super(MFRL, self).__init__(config, seed)
         print('Initialize MFRL!')
         self.config = config
         self.device = config['experiment']['device']
+        self.seed = seed
         self._build()
 
 
@@ -36,16 +37,14 @@ class MFRL(ORL):
 
 
     def _set_data_handler(self):
-        self.data = Data(self.state_dim, self.act_dim, self.config)
+        self.data = Data(self.state_dim, self.act_dim, self.config, self.seed)
 
 
     def _set_agent(self):
         self.agent = DecisionTransformer(self.state_dim,
                                          self.act_dim,
-                                         self.config['experiment']['max_env_len'],
-                                         self.config['learning']['niIter'],
-                                         self.config['learning']['iter_steps'],
-                                         self.config['agent']).to(self.device)
+                                         self.config,
+                                         self.seed).to(self.device)
 
 
     def learn(self, print_logs=True):
@@ -54,15 +53,19 @@ class MFRL(ORL):
         Ni = self.config['learning']['niIter'] # Number of training steps/iteration
         EE = self.config['evaluation']['eval_episodes'] # Number of episodes
 
-        env_targets = self.config['experiment']['env_targets']
 
         logs = dict()
+        gif = True
+        best_ret = 0.0
+
         print('Start Learning!')
         start_time = time.time()
         for n in range(N):
             if print_logs:
                 print('=' * 80)
                 print(f' [ Learning ] Iteration: {n} ')
+            
+            
 
             # learn
             train_start = time.time()
@@ -71,7 +74,8 @@ class MFRL(ORL):
 
             # evaluate
             eval_start = time.time()
-            eval_logs = self.evaluate_agent(EE, print_logs)
+            eval_logs = self.evaluate_agent(EE, gif, n, print_logs)
+
 
             for k, v in eval_logs.items():
                 logs[f'evaluation/{k}'] = v

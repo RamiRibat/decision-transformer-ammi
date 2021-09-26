@@ -7,6 +7,10 @@ import torch as th
 
 
 class ORL:
+    """
+    Offline Reinforcement Learning module
+        Handle higher training and evalution of the trained agent
+    """
     def __init__(self, config):
         print('Initialize ORL!')
         self.config = config
@@ -53,7 +57,6 @@ class ORL:
             if self.agent.scheduler: self.agent.scheduler.step()
 
         return Losses
-
 
 
     def evaluate_agent(self, EE, print_logs=True):

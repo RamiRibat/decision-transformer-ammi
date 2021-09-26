@@ -1,4 +1,5 @@
 # Imports
+import imageio
 ## ML & RL
 import numpy as np
 import torch as th
@@ -14,10 +15,19 @@ class DecisionTransformer(nn.Module):
     Causal Decision Transformer: (R2Gt, st) --> (at)
         traj = (R2G0, s0, a0,, ..., R2Gt, st, at, ..., sT)
     """
-    def __init__(self, state_dim, act_dim, max_ep_len, Ni, Nt, dt_config):
+    def __init__(self, state_dim, act_dim, config, seed):
         print('Initialize Decision Transformer!')
+        np.random.seed(seed), th.manual_seed(seed)
         super().__init__()
-        self.dt_config = dt_config
+
+        self.seed = seed
+        max_ep_len = config['experiment']['max_env_len']
+        Ni = config['learning']['niIter']
+        Nt = config['learning']['iter_steps']
+        self.dt_config = dt_config = config['agent']
+
+        
+        self.config = config
         self.state_dim = state_dim
         self.act_dim = act_dim
         self.emb_dim = emb_dim = dt_config['emb_dim'] # 128
@@ -123,11 +133,13 @@ class DecisionTransformer(nn.Module):
 
     # >>> adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
     def evaluate_model(
-        self,
-        env, device, mode, scale, E,
+        self, env, gif, n,
+        device, mode, scale, E,
         state_mean=0., state_std=1.,
         target_return=None):
-        # print('mode: ', mode)
+
+        # targ_rew = target_return*scale
+        # print('\ngif: ', gif)
         # print('scale: ', scale)
         # print('E: ', E)
         # print('state_mean: ', state_mean)
@@ -151,7 +163,11 @@ class DecisionTransformer(nn.Module):
         sim_states = []
 
         episode_return, episode_length = 0, 0
+        if gif: GifObs = []
         for e in range(E):
+            if gif:
+                gifobs = env.render(mode='rgb_array', width=400, height=400)
+                GifObs.append(gifobs)
 
             # add padding
             actions = th.cat([actions, th.zeros((1, self.act_dim), device=device)], dim=0)
@@ -184,6 +200,16 @@ class DecisionTransformer(nn.Module):
             episode_length += 1
 
             if done: break
+
+        env.close()
+        if gif:
+            print(' [ Saving a gif for evaluation ]     ')
+            env_name = self.config['experiment']['env_name']
+            env_type = self.config['data']['data_type']
+            exp_path = f'./gifs/{env_type}/{env_name}/seed:{self.seed}-iter:{n}.gif'
+            with imageio.get_writer(exp_path, mode='I', duration=0.01) as writer:
+                for obs_np in GifObs:
+                    writer.append_data(obs_np)
 
         return episode_return, episode_length
     # <<< adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)

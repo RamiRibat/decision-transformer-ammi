@@ -14,8 +14,8 @@ configurations = {
     },
 
     'data': {
-        # 'data_type': 'medium-exp', # []
-        'data_type': 'medium', # [3398.7]
+        'data_type': 'expert', # []
+        # 'data_type': 'medium', # [3398.7]
         # 'data_type': 'medium-rep', # []
         'batch_size': 64,
     },

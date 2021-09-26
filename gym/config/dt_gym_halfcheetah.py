@@ -8,14 +8,14 @@ configurations = {
         'env_targets': [12000, 6000],
         'mode': 'normal', # Sparse: 'delayed'
         'pct_traj': 1.,
-        'device': 'cpu',
-        # 'device': 'cuda:0',
+        # 'device': 'cpu',
+        'device': 'cuda:0',
         'WandB': True,
     },
 
     'data': {
-        # 'data_type': 'medium-expert', # []
-        'data_type': 'medium', # [5008.68]
+        'data_type': 'expert', # [Avg ret: 10656.43, std: 441.68 | Max ret: 11252.04, min: 2045.83]
+        # 'data_type': 'medium', # [5008.68]
         # 'data_type': 'medium-reply', # []
         'batch_size': 64,
     },
@@ -43,7 +43,7 @@ configurations = {
 
     'evaluation': {
         'evaluate': True,
-        'eval_episodes': 5,
+        'eval_episodes': 100,
         'render': None,
     }
 

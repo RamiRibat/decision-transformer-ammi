@@ -127,12 +127,12 @@ class DecisionTransformer(nn.Module):
         env, device, mode, scale, E,
         state_mean=0., state_std=1.,
         target_return=None):
-        print('mode: ', mode)
-        print('scale: ', scale)
-        print('E: ', E)
-        print('state_mean: ', state_mean)
-        print('state_std: ', state_std)
-        print('target_return: ', target_return)
+        # print('mode: ', mode)
+        # print('scale: ', scale)
+        # print('E: ', E)
+        # print('state_mean: ', state_mean)
+        # print('state_std: ', state_std)
+        # print('target_return: ', target_return)
 
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)

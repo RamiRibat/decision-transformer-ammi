@@ -23,8 +23,10 @@ class Data:
     Data Handler
         Handle the offline dataset and transform it to a training set
     """
-    def __init__(self, state_dim, act_dim, config):
+    def __init__(self, state_dim, act_dim, config, seed):
         print('Initialize Data!')
+        random.seed(seed), np.random.seed(seed), th.manual_seed(seed)
+        
         self.state_dim, self.act_dim = state_dim, act_dim
         self.device = config['experiment']['device']
         self.config = config

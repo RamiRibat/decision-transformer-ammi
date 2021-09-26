@@ -18,44 +18,48 @@ from rl.mfrl import MFRL
 
 
 
-def main(configs):
+def main(configs, seed):
     print('Start Decision Transformer experiment...')
     print('\n')
     env_name = configs['experiment']['env_name']
     data_type = configs['data']['data_type']
 
 
-    group_name = f"gym-experiment-{env_name}-{data_type}"
+    group_name = f"gym-ammi-{env_name}-{data_type}"
     # exp_prefix = f"{group_name}-{random.randint(int(1e5), int(1e6) - 1)}"
     now = datetime.datetime.now()
-    exp_prefix = f"{group_name}-{now.year}/{now.month}/{now.day}-->{now.hour}:{now.minute}:{now.second}"
+    # exp_prefix = f"{group_name}-{now.year}/{now.month}/{now.day}-->{now.hour}:{now.minute}:{now.second}"
+    exp_prefix = f"{group_name}-seed:{seed}"
+
 
     print('=' * 50)
-    print(f'Starting new experiment: {env_name} {data_type}')
+    print(f'Starting new experiment')
+    print(f"\t Environment: {env_name}")
+    print(f"\t Data type: {data_type}")
+    print(f"\t Random seed: {seed}")
     print('=' * 50)
+
+    configs['seed'] = seed
 
     if configs['experiment']['WandB']:
         wandb.init(
             name=exp_prefix,
             group=group_name,
-            project='dt-ammi',
+            project='dt-gym-ammi',
             # project='rand',
             config=configs
         )
 
-    experiment = MFRL(configs)
+    experiment = MFRL(configs, seed)
 
     agent = experiment.learn()
 
-    th.save(agent, f'./saved_agents/dt-agent-{env_name}.pth.tar')
+    # th.save(agent, f'./saved_agents/dt-agent-{env_name}.pth.tar')
     
     print('\n')
     print('...End Decision Transformer experiment')
     pass
 
-
-
-# python -m fusion.run train -alg mbpo -cfg gym_w2d_at_s1
 
 if __name__ == "__main__":
     import argparse
@@ -63,12 +67,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-cfg', type=str)
-    parser.add_argument('-cfg_path', type=str)
+    parser.add_argument('-seed', type=int)
+    # parser.add_argument('-cfg_path', type=str)
 
     args = parser.parse_args()
 
     sys.path.append("./config")
     config = importlib.import_module(args.cfg)
-    print('configurations: ', config.configurations)
+    seed = args.seed
 
-    main(config.configurations)
+    main(config.configurations, seed)

@@ -10,3 +10,4 @@ gym/wandb
 gym/.DS_Store
 
 gym/saved_agents/
+gym/gifs/

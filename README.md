@@ -64,9 +64,13 @@ python experiment.py -cfg dt_gym_halfcheetah
 ```
 
 ## Results
-Due to time limit and limited compute resources, I chose a subset of tasks to evaluate and validate my re-implementation: HalfCheetah, Walker, and Hopper for medium offline datasets. Check [W&B](https://wandb.ai/aimsammi/dt-ammi?workspace=user-rami-ahmed)
+Due to time limit and limited compute resources, I chose a subset of tasks to evaluate and validate my re-implementation: HalfCheetah, Walker, and Hopper for Medium-Expert and Medium offline datasets. Check [W&B](https://wandb.ai/aimsammi/dt-ammi?workspace=user-rami-ahmed)
 
 | Dataset | Environement | DT (mine) | DT (paper) |
+| ------------- | ------------- | ------------- | ------------- |
+| Medium-Expert | HalfCheetah | ? ± ? | 68.8 ± 1.3 |
+| Medium-Expert | Hopper | ? ± ? | 107.6 ± 1.8 |
+| Medium-Expert | Walker2d | ? ± ? | 108.1 ± 0.2 |
 | ------------- | ------------- | ------------- | ------------- |
 | Medium | HalfCheetah | ? ± ? | 42.6 ± 0.1 |
 | Medium | Hopper | ? ± ? | 67.6 ± 1.0 |
@@ -76,9 +80,9 @@ Next, I'll run the following:
 
 | Dataset | Environement | DT (mine) | DT (paper) |
 | ------------- | ------------- | ------------- | ------------- |
-| Medium-Expert | HalfCheetah | ? ± ? | 68.8 ± 1.3 |
-| Medium-Expert | Hopper | ? ± ? | 107.6 ± 1.8 |
-| Medium-Expert | Walker2d | ? ± ? | 108.1 ± 0.2 |
+| Medium-Reply | HalfCheetah | ? ± ? | 36.6 ± 0.8 |
+| Medium-Reply | Hopper | ? ± ? | 82.7 ± 7.0 |
+| Medium-Reply | Walker2d | ? ± ? | 66.6 ± 3.0 |
 
 
 Note: The above results are normalized scores for those tasks, to calculate the normalized score from the final return:

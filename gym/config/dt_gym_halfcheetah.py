@@ -14,8 +14,8 @@ configurations = {
     },
 
     'data': {
-        'data_type': 'expert', # [Avg ret: 10656.43, std: 441.68 | Max ret: 11252.04, min: 2045.83]
-        # 'data_type': 'medium', # [5008.68]
+        # 'data_type': 'expert', # [Avg ret: 10656.43, std: 441.68 | Max ret: 11252.04, min: 2045.83]
+        'data_type': 'medium', # [Avg ret: 4770.33, std: 355.75 | Max ret: 5309.38, min: -310.23]
         # 'data_type': 'medium-reply', # []
         'batch_size': 64,
     },

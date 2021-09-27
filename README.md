@@ -71,7 +71,6 @@ Due to time limit and limited compute resources, I chose a subset of tasks to ev
 | Medium-Expert | HalfCheetah | ? ± ? | 68.8 ± 1.3 |
 | Medium-Expert | Hopper | ? ± ? | 107.6 ± 1.8 |
 | Medium-Expert | Walker2d | ? ± ? | 108.1 ± 0.2 |
-| ------------- | ------------- | ------------- | ------------- |
 | Medium | HalfCheetah | ? ± ? | 42.6 ± 0.1 |
 | Medium | Hopper | ? ± ? | 67.6 ± 1.0 |
 | Medium | Walker2d | ? ± ? | 74.0 ± 1.4 |

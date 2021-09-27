@@ -79,9 +79,9 @@ Next, I'll run the following:
 
 | Dataset | Environement | DT (mine) | DT (paper) |
 | ------------- | ------------- | ------------- | ------------- |
-| Medium-Reply | HalfCheetah | ? ± ? | 36.6 ± 0.8 |
-| Medium-Reply | Hopper | ? ± ? | 82.7 ± 7.0 |
-| Medium-Reply | Walker2d | ? ± ? | 66.6 ± 3.0 |
+| Medium-Replay | HalfCheetah | ? ± ? | 36.6 ± 0.8 |
+| Medium-Replay | Hopper | ? ± ? | 82.7 ± 7.0 |
+| Medium-Replay | Walker2d | ? ± ? | 66.6 ± 3.0 |
 
 
 Note: The above results are normalized scores for those tasks, to calculate the normalized score from the final return:

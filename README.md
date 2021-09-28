@@ -74,12 +74,12 @@ Due to time limit and limited compute resources, I chose a subset of tasks to ev
 | Medium | HalfCheetah | ? ± ? | 42.6 ± 0.1 |
 | Medium | Hopper | ? ± ? | 67.6 ± 1.0 |
 | Medium | Walker2d | ? ± ? | 74.0 ± 1.4 |
+| Medium-Replay | HalfCheetah | ? ± ? | 36.6 ± 0.8 |
 
 Next, I'll run the following:
 
 | Dataset | Environement | DT (mine) | DT (paper) |
 | ------------- | ------------- | ------------- | ------------- |
-| Medium-Replay | HalfCheetah | ? ± ? | 36.6 ± 0.8 |
 | Medium-Replay | Hopper | ? ± ? | 82.7 ± 7.0 |
 | Medium-Replay | Walker2d | ? ± ? | 66.6 ± 3.0 |
 

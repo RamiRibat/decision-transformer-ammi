@@ -7,14 +7,14 @@ import torch as th
 
 
 
-# adapted from original code, DT/gym/experiment.py (start)
+# adapted from original code, decision-transformer/gym/experiment.py (start)
 def discount_cumsum(x, gamma):
     discount_cumsum = np.zeros_like(x)
     discount_cumsum[-1] = x[-1]
     for t in reversed(range(x.shape[0]-1)):
         discount_cumsum[t] = x[t] + gamma * discount_cumsum[t+1]
     return discount_cumsum
-# adapted from original code, DT/gym/experiment.py (end)
+# adapted from original code, decision-transformer/gym/experiment.py (end)
 
 
 
@@ -50,7 +50,7 @@ class Data:
 
         numT = sum(Traj_lens)
 
-        # >>> adapted from original code, DT/gym/experiment.py (start)
+        # >>> adapted from original code, decision-transformer/gym//experiment.py (start)
         pct_traj = 1. # variant.get('pct_traj', 1.)
 
         # only train on top pct_traj trajectories (for %BC experiment)
@@ -68,7 +68,7 @@ class Data:
 
         # used to reweight sampling so we sample according to timesteps instead of trajectories
         self.p_sample = Traj_lens[sorted_inxs] / sum(Traj_lens[sorted_inxs])
-        # <<< adapted from original code, DT/gym/experiment.py (end)
+        # <<< adapted from original code, decision-transformer/gym//experiment.py (end)
 
         self.nTrajs = nTrajs
         self.sorted_inxs = sorted_inxs
@@ -86,7 +86,7 @@ class Data:
 
         S, A, R, D, R2G, T, mask = [], [], [], [], [], [], []
 
-        # >>> adapted from original code, DT/gym/experiment.py (start)
+        # >>> adapted from original code, decision-transformer/gym//experiment.py (start)
         for i in range(batch_size):
             traj = self.Trajs[int(self.sorted_inxs[idxs[i]])]
             si = random.randint(0, traj['rewards'].shape[0] - 1)
@@ -114,7 +114,7 @@ class Data:
             R2G[-1] = np.concatenate([np.zeros((1, K - tlen, 1)), R2G[-1]], axis=1) / scale
             T[-1] = np.concatenate([np.zeros((1, K - tlen)), T[-1]], axis=1)
             mask.append(np.concatenate([np.zeros((1, K - tlen)), np.ones((1, tlen))], axis=1))
-        # <<< adapted from original code, DT/gym/experiment.py (end)
+        # <<< adapted from original code, decision-transformer/gym//experiment.py (end)
 
         S = th.as_tensor(np.concatenate(S, axis=0), dtype=th.float32).to(self.device)
         # print('S: ', S)

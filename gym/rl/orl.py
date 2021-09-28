@@ -1,5 +1,3 @@
-# Imports
-# ML & RL
 import gym
 import numpy as np
 import torch as th
@@ -30,14 +28,10 @@ class ORL:
         elif env_name == 'walker2d':
             name = 'Walker2d-v3'
 
-        # if self.config['evaluation']['evaluate']:
-            # self.eval_env, self.dt_from_xml = create_env(name)
         self.eval_env = gym.make(name) #MakeEnv(self.environment)
         self.eval_env.seed(self.seed)
         self.eval_env.action_space.seed(self.seed)
         self.eval_env.observation_space.seed(self.seed)
-        # else:
-        #     self.eval_env = None
 
         self.state_dim = self.eval_env.observation_space.shape[0]
         self.act_dim = self.eval_env.action_space.shape[0]

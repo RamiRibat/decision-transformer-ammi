@@ -1,17 +1,12 @@
-# Imports
-# General
 import time
 
-# ML & RL
 import numpy as np
 import torch as th
 import wandb
 
-# DT-AMMI
 from .orl import ORL
 from data.data_handler import Data
 from decision_transformer.agents.dt import DecisionTransformer
-
 
 
 
@@ -53,7 +48,6 @@ class MFRL(ORL):
         Ni = self.config['learning']['niIter'] # Number of training steps/iteration
         EE = self.config['evaluation']['eval_episodes'] # Number of episodes
 
-
         logs = dict()
         gif = True
         best_ret = 0.0
@@ -64,8 +58,6 @@ class MFRL(ORL):
             if print_logs:
                 print('=' * 80)
                 print(f' [ Learning ] Iteration: {n} ')
-            
-            
 
             # learn
             train_start = time.time()
@@ -75,7 +67,6 @@ class MFRL(ORL):
             # evaluate
             eval_start = time.time()
             eval_logs = self.evaluate_agent(EE, gif, n, print_logs)
-
 
             for k, v in eval_logs.items():
                 logs[f'evaluation/{k}'] = v

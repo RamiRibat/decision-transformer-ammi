@@ -1,3 +1,5 @@
+"""Source: decision-transformer/gym/data/download_d4rl_datasets.py"""
+
 import gym
 import numpy as np
 
@@ -10,8 +12,7 @@ import d4rl
 datasets = []
 
 for env_name in ['halfcheetah', 'hopper', 'walker2d']:
-	for dataset_type in ['medium', 'expert']:
-    # for dataset_type in ['medium']:
+	for dataset_type in ['medium', 'expert', 'medium-replay']:
 		name = f'{env_name}-{dataset_type}-v2'
 		env = gym.make(name)
 		dataset = env.get_dataset()

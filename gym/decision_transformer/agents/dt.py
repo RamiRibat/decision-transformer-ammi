@@ -1,13 +1,13 @@
-# Imports
 import imageio
-## ML & RL
+
 import numpy as np
 import torch as th
 import torch.nn as nn
 from torch.nn import Embedding, Linear, LayerNorm, Sequential, Tanh, MSELoss
 import transformers
-## DT-AMMI
+
 from .traj_gptx.gpt2 import GPT2Model
+
 
 
 class DecisionTransformer(nn.Module):
@@ -54,8 +54,6 @@ class DecisionTransformer(nn.Module):
 
         self.next_a = Sequential(*[Linear(emb_dim, act_dim), Tanh()])
 
-        # print('dt self: ', self)
-
         optimizer = 'th.optim.' + dt_config['optimizer']
         schedular = 'th.optim.lr_scheduler.' + dt_config['scheduler']
         self.optimizer = eval(optimizer)(self.parameters(), lr=dt_config['lr'], weight_decay=dt_config['weight_decay'])
@@ -68,8 +66,6 @@ class DecisionTransformer(nn.Module):
 
         if att_mask is None: att_mask = th.ones((batch_size, seq_len), dtype=th.long)
 
-        # print('T type: ', T.type())
-        # print('S type: ', S.type())
         t_embs = self.emb_t(T)
         r2g_embs = self.emb_r2g(R2G) + t_embs
         s_embs = self.emb_s(S) + t_embs
@@ -131,20 +127,12 @@ class DecisionTransformer(nn.Module):
         return loss.detach().cpu().item()
 
 
-    # >>> adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
+    # >>> adapted from original code, decision-transformer/gym/decision_transformer/evaluation/evaluate_episodes.py (start)
     def evaluate_model(
         self, env, gif, n,
         device, mode, scale, E,
         state_mean=0., state_std=1.,
         target_return=None):
-
-        # targ_rew = target_return*scale
-        # print('\ngif: ', gif)
-        # print('scale: ', scale)
-        # print('E: ', E)
-        # print('state_mean: ', state_mean)
-        # print('state_std: ', state_std)
-        # print('target_return: ', target_return)
 
         state_mean = th.as_tensor(state_mean).to(device=device)
         state_std = th.as_tensor(state_std).to(device=device)
@@ -212,4 +200,4 @@ class DecisionTransformer(nn.Module):
                     writer.append_data(obs_np)
 
         return episode_return, episode_length
-    # <<< adapted from original code, DT/gym/decision_transformer/evaluation/evaluate_episodes.py (end)
+    # <<< adapted from original code, decision-transformer/gym/decision_transformer/evaluation/evaluate_episodes.py (end)

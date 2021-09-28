@@ -1,15 +1,6 @@
 """
-From org code: DT/decision_transformer/traj_gpt2.py
+Source: decision-transformer/gym/decision_transformer/traj_gpt2.py
 """
-
-# import numpy as np
-# import torch as th
-
-
-# class GPT2:
-#     def __init__(self):
-#         pass
-#     pass
 
 
 # coding=utf-8
